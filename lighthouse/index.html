@@ -88,7 +88,7 @@
             position: absolute;
             top: 0;
             left: 0;
-            clip-path: circle(0% at 50% 50%); /* Initially cover the intermediate with no visible area */
+            clip-path: circle(150px at 50% 50%);
             z-index: 2;
         }
 </style>
@@ -130,7 +130,8 @@
             const clipPathX4 = lighthouseX + beamLength * Math.cos(angle * Math.PI / 180) + wideWidth * Math.cos((angle + 90) * Math.PI / 180);
             const clipPathY4 = lighthouseY + beamLength * Math.sin(angle * Math.PI / 180) + wideWidth * Math.sin((angle + 90) * Math.PI / 180);
             foregroundBackground.style.clipPath = `polygon(${clipPathX1}px ${clipPathY1}px, ${clipPathX2}px ${clipPathY2}px, ${clipPathX3}px ${clipPathY3}px, ${clipPathX4}px ${clipPathY4}px)`;
-            intermediateBackground.style.clipPath = `circle(150px at 50% 50%)`; // Reveal area in fixed shape rotating
+            intermediateBackground.style.clipPath = `circle(150px at 50% 50%)`;
+             // Reveal area in fixed shape rotating
             revealCone.style.clipPath = `polygon(${clipPathX1}px ${clipPathY1}px, ${clipPathX2}px ${clipPathY2}px, ${clipPathX3}px ${clipPathY3}px, ${clipPathX4}px ${clipPathY4}px)`; // Match the cone shape to add yellowish light effect
 
             // Reveal verses based on light position
