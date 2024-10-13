@@ -79,18 +79,32 @@
             50% { opacity: 0.3; }
             100% { opacity: 0.8; }
         }
-    </style>
+            .intermediate-background {
+            background-image: url('islands.png');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            width: 100vw;
+            position: absolute;
+            top: 0;
+            left: 0;
+            clip-path: circle(0% at 50% 50%); /* Initially cover the intermediate with no visible area */
+            z-index: 2;
+        }
+</style>
 </head>
 <body>
     <div class="background"></div>
     <div class="foreground-background"></div>
+    <div class="intermediate-background"></div>
     <div class="lighthouse"></div>
-    <div class="verse" style="top: 20%; left: 20%;" id="verse1">"Listen to me, you islands..."</div>
-    <div class="verse" style="top: 80%; left: 60%;" id="verse2">"Before I was born the Lord called me..."</div>
+    <div class="verse" style="top: 20%; left: 20%; z-index: 6;" id="verse1">"Listen to me, you islands..."</div>
+    <div class="verse" style="top: 80%; left: 60%; z-index: 6;" id="verse2">"Before I was born the Lord called me..."</div>
     <div class="reveal-cone"></div>
     <div class="flickering-circle"></div>
     <script>
         document.addEventListener('mousemove', function (event) {
+            const intermediateBackground = document.querySelector('.intermediate-background');
             const lighthouse = document.querySelector('.lighthouse');
             const foregroundBackground = document.querySelector('.foreground-background');
             const revealCone = document.querySelector('.reveal-cone');
@@ -115,7 +129,8 @@
             const clipPathY3 = lighthouseY + beamLength * Math.sin(angle * Math.PI / 180) + wideWidth * Math.sin((angle - 90) * Math.PI / 180);
             const clipPathX4 = lighthouseX + beamLength * Math.cos(angle * Math.PI / 180) + wideWidth * Math.cos((angle + 90) * Math.PI / 180);
             const clipPathY4 = lighthouseY + beamLength * Math.sin(angle * Math.PI / 180) + wideWidth * Math.sin((angle + 90) * Math.PI / 180);
-            foregroundBackground.style.clipPath = `polygon(${clipPathX1}px ${clipPathY1}px, ${clipPathX2}px ${clipPathY2}px, ${clipPathX3}px ${clipPathY3}px, ${clipPathX4}px ${clipPathY4}px)`; // Reveal area in fixed shape rotating
+            foregroundBackground.style.clipPath = `polygon(${clipPathX1}px ${clipPathY1}px, ${clipPathX2}px ${clipPathY2}px, ${clipPathX3}px ${clipPathY3}px, ${clipPathX4}px ${clipPathY4}px)`;
+            intermediateBackground.style.clipPath = `circle(150px at 50% 50%)`; // Reveal area in fixed shape rotating
             revealCone.style.clipPath = `polygon(${clipPathX1}px ${clipPathY1}px, ${clipPathX2}px ${clipPathY2}px, ${clipPathX3}px ${clipPathY3}px, ${clipPathX4}px ${clipPathY4}px)`; // Match the cone shape to add yellowish light effect
 
             // Reveal verses based on light position
