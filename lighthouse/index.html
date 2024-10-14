@@ -41,6 +41,11 @@
             top: calc(50% - 40px); /* Adjusted offset from the middle */
             transform: translate(-50%, -50%);
             z-index: 4; /* Ensure the lighthouse is always visible */
+            /* Placeholder for lighthouse image */
+            width: 20px;
+            height: 40px;
+            background: url('lighthouse.png') no-repeat center center;
+            background-size: contain;
         }
         .verse {
             position: absolute;
@@ -49,6 +54,13 @@
             text-shadow: 2px 2px 4px #000;
             transition: opacity 1s;
             opacity: 0;
+            z-index: 6;
+            pointer-events: auto; /* Allow mouse events */
+        }
+        /* Classes to control opacity */
+        .verse.hovered,
+        .verse.lit {
+            opacity: 1;
         }
         .reveal-cone {
             position: absolute;
@@ -99,29 +111,55 @@
     <div class="foreground-background"></div>
     <div class="intermediate-background"></div>
     <div class="lighthouse"></div>
-    <div class="verse" style="top: 20%; left: 20%; z-index: 6;" id="verse1">"Listen to me, you islands;<br /> hear this, you distant nations..."</div>
-    <script>
-        document.getElementById('verse1').addEventListener('mouseenter', function() {
-            document.getElementById('verse1').style.opacity = 1;
-        });
-        document.getElementById('verse1').addEventListener('mouseleave', function() {
-            document.getElementById('verse1').style.opacity = 0;
-        });
-    </script>
-    <div class="verse" style="top: 80%; left: 60%; z-index: 6;" id="verse2">"I will also make you a light for the Gentiles,<br /> that my salvation may reach to the ends of the earth."</div>
-    <script>
-        document.getElementById('verse2').addEventListener('mouseenter', function() {
-            document.getElementById('verse2').style.opacity = 1;
-        });
-        document.getElementById('verse2').addEventListener('mouseleave', function() {
-            document.getElementById('verse2').style.opacity = 0;
-        });
-    </script>
+    
+    <!-- Verses -->
+    <div class="verse" style="top: 20%; left: 20%;" id="verse1">
+        "Listen to me, you islands;<br /> hear this, you distant nations..."
+    </div>
+    <div class="verse" style="top: 80%; left: 60%;" id="verse2">
+        "I will also make you a light for the Gentiles,<br /> that my salvation may reach to the ends of the earth."
+    </div>
+    
     <div class="reveal-cone"></div>
     <div class="flickering-circle"></div>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            
+            // Helper function to add or remove classes
+            function toggleClass(element, className, condition) {
+                if (condition) {
+                    element.classList.add(className);
+                } else {
+                    element.classList.remove(className);
+                }
+            }
+
+            // Initialize verses
+            const verses = [
+                {
+                    element: document.getElementById('verse1'),
+                    isHovered: false,
+                    isLit: false
+                },
+                {
+                    element: document.getElementById('verse2'),
+                    isHovered: false,
+                    isLit: false
+                }
+            ];
+
+            // Add hover event listeners to verses
+            verses.forEach(verse => {
+                verse.element.addEventListener('mouseenter', function() {
+                    verse.isHovered = true;
+                    toggleClass(verse.element, 'hovered', true);
+                });
+                verse.element.addEventListener('mouseleave', function() {
+                    verse.isHovered = false;
+                    toggleClass(verse.element, 'hovered', false);
+                });
+            });
+
             let autoRotate = true;
             let currentAngle = 0;
 
@@ -138,19 +176,20 @@
                 const foregroundBackground = document.querySelector('.foreground-background');
                 const revealCone = document.querySelector('.reveal-cone');
                 const intermediateBackground = document.querySelector('.intermediate-background');
-                const verse1 = document.getElementById('verse1');
-                const verse2 = document.getElementById('verse2');
 
+                const radians = (angle * Math.PI) / 180;
+
+                // Calculate lighthouse position
                 const rect = lighthouse.getBoundingClientRect();
                 const lighthouseX = rect.left + rect.width / 2;
                 const lighthouseY = rect.top + rect.height / 2;
 
-                const radians = (angle * Math.PI) / 180;
-
-                // Reveal parts of the foreground background based on light position with a fixed shape rotating
+                // Beam parameters
                 const narrowWidth = 30; // Narrow width at the lighthouse
                 const wideWidth = 800; // Wide width at the distant side to ensure it reaches the sides of the screen
                 const beamLength = 2000; // Extended length to ensure coverage
+
+                // Calculate clip path points
                 const clipPathX1 = lighthouseX;
                 const clipPathY1 = lighthouseY;
                 const clipPathX2 = lighthouseX + narrowWidth * Math.cos(radians - Math.PI / 2);
@@ -159,25 +198,29 @@
                 const clipPathY3 = lighthouseY + beamLength * Math.sin(radians) + wideWidth * Math.sin(radians - Math.PI / 2);
                 const clipPathX4 = lighthouseX + beamLength * Math.cos(radians) + wideWidth * Math.cos(radians + Math.PI / 2);
                 const clipPathY4 = lighthouseY + beamLength * Math.sin(radians) + wideWidth * Math.sin(radians + Math.PI / 2);
+
+                // Update clip paths
                 foregroundBackground.style.clipPath = `polygon(${clipPathX1}px ${clipPathY1}px, ${clipPathX2}px ${clipPathY2}px, ${clipPathX3}px ${clipPathY3}px, ${clipPathX4}px ${clipPathY4}px)`;
-                intermediateBackground.style.clipPath = `circle(150px at 50% 50%)`;
                 revealCone.style.clipPath = `polygon(${clipPathX1}px ${clipPathY1}px, ${clipPathX2}px ${clipPathY2}px, ${clipPathX3}px ${clipPathY3}px, ${clipPathX4}px ${clipPathY4}px)`;
 
-                // Highlight verses when light passes over them
-                const distanceToVerse1 = Math.hypot(lighthouseX + beamLength * Math.cos(radians) - verse1.offsetLeft, lighthouseY + beamLength * Math.sin(radians) - verse1.offsetTop);
-                const distanceToVerse2 = Math.hypot(lighthouseX + beamLength * Math.cos(radians) - verse2.offsetLeft, lighthouseY + beamLength * Math.sin(radians) - verse2.offsetTop);
+                // Check if light is passing over any verse
+                verses.forEach(verse => {
+                    const verseRect = verse.element.getBoundingClientRect();
+                    const verseX = verseRect.left + verseRect.width / 2;
+                    const verseY = verseRect.top + verseRect.height / 2;
 
-                if (distanceToVerse1 < 200) {
-                    verse1.style.opacity = 1;
-                } else {
-                    verse1.style.opacity = 0;
-                }
+                    // Calculate distance from light beam center to verse center
+                    const beamEndX = lighthouseX + beamLength * Math.cos(radians);
+                    const beamEndY = lighthouseY + beamLength * Math.sin(radians);
+                    const distance = Math.hypot(beamEndX - verseX, beamEndY - verseY);
 
-                if (distanceToVerse2 < 200) {
-                    verse2.style.opacity = 1;
-                } else {
-                    verse2.style.opacity = 0;
-                }
+                    // Define a threshold distance to consider the light as passing over
+                    const threshold = 150; // Adjust as needed
+
+                    // Update the lit state based on distance
+                    verse.isLit = distance < threshold;
+                    toggleClass(verse.element, 'lit', verse.isLit);
+                });
             }
 
             document.addEventListener('mousemove', function (event) {
@@ -186,8 +229,6 @@
                 const foregroundBackground = document.querySelector('.foreground-background');
                 const revealCone = document.querySelector('.reveal-cone');
                 const intermediateBackground = document.querySelector('.intermediate-background');
-                const verse1 = document.getElementById('verse1');
-                const verse2 = document.getElementById('verse2');
 
                 const rect = lighthouse.getBoundingClientRect();
                 const lighthouseX = rect.left + rect.width / 2;
