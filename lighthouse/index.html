@@ -100,11 +100,28 @@
     <div class="intermediate-background"></div>
     <div class="lighthouse"></div>
     <div class="verse" style="top: 20%; left: 20%; z-index: 6;" id="verse1">"Listen to me, you islands;<br /> hear this, you distant nations..."</div>
+    <script>
+        document.getElementById('verse1').addEventListener('mouseenter', function() {
+            document.getElementById('verse1').style.opacity = 1;
+        });
+        document.getElementById('verse1').addEventListener('mouseleave', function() {
+            document.getElementById('verse1').style.opacity = 0;
+        });
+    </script>
     <div class="verse" style="top: 80%; left: 60%; z-index: 6;" id="verse2">"I will also make you a light for the Gentiles,<br /> that my salvation may reach to the ends of the earth."</div>
+    <script>
+        document.getElementById('verse2').addEventListener('mouseenter', function() {
+            document.getElementById('verse2').style.opacity = 1;
+        });
+        document.getElementById('verse2').addEventListener('mouseleave', function() {
+            document.getElementById('verse2').style.opacity = 0;
+        });
+    </script>
     <div class="reveal-cone"></div>
     <div class="flickering-circle"></div>
     <script>
-        let autoRotate = true;
+        document.addEventListener('DOMContentLoaded', function() {
+            let autoRotate = true;
         let currentAngle = 0;
 
         function rotateLight() {
@@ -163,7 +180,7 @@
         }
 
         document.addEventListener('mousemove', function (event) {
-            autoRotate = false;
+                autoRotate = false;
             const lighthouse = document.querySelector('.lighthouse');
             const foregroundBackground = document.querySelector('.foreground-background');
             const revealCone = document.querySelector('.reveal-cone');
@@ -185,7 +202,7 @@
             inactivityTimer = setTimeout(() => {
                 autoRotate = true;
                 rotateLight();
-            }, 2000);
+            }, 3000);
         }
         
         document.addEventListener('mousemove', resetInactivityTimer);
