@@ -114,10 +114,10 @@
     <div class="lighthouse"></div>
     
     <!-- Verses -->
-    <div class="verse" style="top: 20%; left: 20%;" id="verse1">
+    <div class="verse" style="top: 20%; left: 20%;" id="verse1" tabindex="0" role="button" aria-label="Verse 1">
         "Listen to me, you islands;<br /> hear this, you distant nations..."
     </div>
-    <div class="verse" style="top: 80%; left: 60%;" id="verse2">
+    <div class="verse" style="top: 80%; left: 60%;" id="verse2" tabindex="0" role="button" aria-label="Verse 2">
         "I will also make you a light for the Gentiles,<br /> that my salvation may reach to the ends of the earth."
     </div>
     
@@ -184,7 +184,7 @@
 
             function rotateLight() {
                 if (!autoRotate) return;
-                currentAngle += 0.5;
+                currentAngle += 0.2; // Slower rotation
                 if (currentAngle >= 360) currentAngle = 0;
                 updateLightPosition(currentAngle);
                 requestAnimationFrame(rotateLight);
