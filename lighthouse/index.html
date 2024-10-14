@@ -37,13 +37,13 @@
         }
         .lighthouse {
             position: absolute;
-            left: calc(50% - 10px); /* Adjusted offset from the middle */
-            top: calc(50% - 40px); /* Adjusted offset from the middle */
+            left: 50%;
+            top: 50%;
             transform: translate(-50%, -50%);
             z-index: 4; /* Ensure the lighthouse is always visible */
             /* Placeholder for lighthouse image */
-            width: 20px;
-            height: 40px;
+            width: 40px;
+            height: 80px;
             background: url('lighthouse.png') no-repeat center center;
             background-size: contain;
         }
@@ -56,6 +56,7 @@
             opacity: 0;
             z-index: 6;
             pointer-events: auto; /* Allow mouse events */
+            cursor: pointer;
         }
         /* Classes to control opacity */
         .verse.hovered,
@@ -163,6 +164,24 @@
             let autoRotate = true;
             let currentAngle = 0;
 
+            // Helper function to normalize angles between 0-360 degrees
+            function normalizeAngle(angle) {
+                return (angle % 360 + 360) % 360;
+            }
+
+            // Helper function to calculate the smallest difference between two angles
+            function angleDifference(angle1, angle2) {
+                let diff = Math.abs(angle1 - angle2) % 360;
+                return diff > 180 ? 360 - diff : diff;
+            }
+
+            // Function to calculate angle from lighthouse to a point
+            function calculateAngle(lighthouseX, lighthouseY, pointX, pointY) {
+                let angleRad = Math.atan2(pointY - lighthouseY, pointX - lighthouseX);
+                let angleDeg = angleRad * (180 / Math.PI);
+                return normalizeAngle(angleDeg);
+            }
+
             function rotateLight() {
                 if (!autoRotate) return;
                 currentAngle += 0.5;
@@ -189,7 +208,7 @@
                 const wideWidth = 800; // Wide width at the distant side to ensure it reaches the sides of the screen
                 const beamLength = 2000; // Extended length to ensure coverage
 
-                // Calculate clip path points
+                // Calculate clip path points for the beam
                 const clipPathX1 = lighthouseX;
                 const clipPathY1 = lighthouseY;
                 const clipPathX2 = lighthouseX + narrowWidth * Math.cos(radians - Math.PI / 2);
@@ -198,27 +217,32 @@
                 const clipPathY3 = lighthouseY + beamLength * Math.sin(radians) + wideWidth * Math.sin(radians - Math.PI / 2);
                 const clipPathX4 = lighthouseX + beamLength * Math.cos(radians) + wideWidth * Math.cos(radians + Math.PI / 2);
                 const clipPathY4 = lighthouseY + beamLength * Math.sin(radians) + wideWidth * Math.sin(radians + Math.PI / 2);
-
-                // Update clip paths
+                
+                // Update clip paths to visualize the beam
                 foregroundBackground.style.clipPath = `polygon(${clipPathX1}px ${clipPathY1}px, ${clipPathX2}px ${clipPathY2}px, ${clipPathX3}px ${clipPathY3}px, ${clipPathX4}px ${clipPathY4}px)`;
                 revealCone.style.clipPath = `polygon(${clipPathX1}px ${clipPathY1}px, ${clipPathX2}px ${clipPathY2}px, ${clipPathX3}px ${clipPathY3}px, ${clipPathX4}px ${clipPathY4}px)`;
 
-                // Check if light is passing over any verse
+                // Calculate the center position of the beam
+                const beamEndX = lighthouseX + beamLength * Math.cos(radians);
+                const beamEndY = lighthouseY + beamLength * Math.sin(radians);
+
+                // Update each verse's lit state based on the beam's angle
                 verses.forEach(verse => {
                     const verseRect = verse.element.getBoundingClientRect();
                     const verseX = verseRect.left + verseRect.width / 2;
                     const verseY = verseRect.top + verseRect.height / 2;
 
-                    // Calculate distance from light beam center to verse center
-                    const beamEndX = lighthouseX + beamLength * Math.cos(radians);
-                    const beamEndY = lighthouseY + beamLength * Math.sin(radians);
-                    const distance = Math.hypot(beamEndX - verseX, beamEndY - verseY);
+                    // Calculate the angle from the lighthouse to the verse
+                    const verseAngle = calculateAngle(lighthouseX, lighthouseY, verseX, verseY);
 
-                    // Define a threshold distance to consider the light as passing over
-                    const threshold = 150; // Adjust as needed
+                    // Calculate the difference between the current beam angle and the verse angle
+                    const diff = angleDifference(angle, verseAngle);
 
-                    // Update the lit state based on distance
-                    verse.isLit = distance < threshold;
+                    // Define a threshold angle to consider the verse as lit
+                    const threshold = 10; // degrees
+
+                    // Update the lit state based on the angle difference
+                    verse.isLit = diff <= threshold;
                     toggleClass(verse.element, 'lit', verse.isLit);
                 });
             }
@@ -234,8 +258,12 @@
                 const lighthouseX = rect.left + rect.width / 2;
                 const lighthouseY = rect.top + rect.height / 2;
 
-                const angle = Math.atan2(event.clientY - lighthouseY, event.clientX - lighthouseX) * 180 / Math.PI;
-                updateLightPosition(angle);
+                // Calculate the angle from lighthouse to mouse position
+                const angleRad = Math.atan2(event.clientY - lighthouseY, event.clientX - lighthouseX);
+                let angleDeg = angleRad * (180 / Math.PI);
+                angleDeg = normalizeAngle(angleDeg);
+                currentAngle = angleDeg;
+                updateLightPosition(currentAngle);
             });
 
             let inactivityTimer;
