@@ -227,7 +227,7 @@
 
             function rotateLight() {
                 if (!autoRotate) return;
-                currentAngle += 0.2; // Slower rotation
+                currentAngle += 0.1; // Slower rotation
                 if (currentAngle >= 360) currentAngle = 0;
                 updateLightPosition(currentAngle);
                 requestAnimationFrame(rotateLight);
