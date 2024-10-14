@@ -62,6 +62,7 @@
             cursor: pointer;
             max-width: 80%;
             word-wrap: break-word;
+            box-sizing: border-box;
         }
         /* Classes to control opacity */
         .verse.hovered,
@@ -115,21 +116,19 @@
         @media (max-width: 768px) {
             .verse {
                 font-size: 1.5em;
-                top: auto !important;
-                left: auto !important;
-                right: 10%;
-                bottom: 10%;
                 max-width: 90%;
             }
 
             #verse1 {
                 top: 20%;
                 left: 10%;
+                transform: none;
             }
 
             #verse2 {
                 top: 70%;
                 left: 60%;
+                transform: none;
             }
         }
 
@@ -137,16 +136,16 @@
             .verse {
                 font-size: 1.2em;
                 max-width: 95%;
+                left: 50%;
+                transform: translateX(-50%);
             }
 
             #verse1 {
-                top: 15%;
-                left: 5%;
+                top: 10%;
             }
 
             #verse2 {
-                top: 75%;
-                left: 55%;
+                top: 80%;
             }
         }
     </style>
@@ -244,8 +243,8 @@
 
                 // Calculate lighthouse position
                 const rect = lighthouse.getBoundingClientRect();
-                const lighthouseX = rect.left + rect.width / 2 - 20;
-                const lighthouseY = rect.top + rect.height / 2 - 40;
+                const lighthouseX = rect.left + rect.width / 2;
+                const lighthouseY = rect.top; // Top center of the lighthouse
 
                 // Beam parameters
                 const narrowWidth = 30; // Narrow width at the lighthouse
@@ -265,10 +264,6 @@
                 // Update clip paths to visualize the beam
                 foregroundBackground.style.clipPath = `polygon(${clipPathX1}px ${clipPathY1}px, ${clipPathX2}px ${clipPathY2}px, ${clipPathX3}px ${clipPathY3}px, ${clipPathX4}px ${clipPathY4}px)`;
                 revealCone.style.clipPath = `polygon(${clipPathX1}px ${clipPathY1}px, ${clipPathX2}px ${clipPathY2}px, ${clipPathX3}px ${clipPathY3}px, ${clipPathX4}px ${clipPathY4}px)`;
-
-                // Calculate the center position of the beam
-                const beamEndX = lighthouseX + beamLength * Math.cos(radians);
-                const beamEndY = lighthouseY + beamLength * Math.sin(radians);
 
                 // Update each verse's lit state based on the beam's angle
                 verses.forEach(verse => {
@@ -300,7 +295,7 @@
 
                 const rect = lighthouse.getBoundingClientRect();
                 const lighthouseX = rect.left + rect.width / 2;
-                const lighthouseY = rect.top + rect.height / 2 - (rect.height / 2); // Top center of the lighthouse
+                const lighthouseY = rect.top; // Top center of the lighthouse
 
                 // Calculate the angle from lighthouse to mouse position
                 const angleRad = Math.atan2(event.clientY - lighthouseY, event.clientX - lighthouseX);
