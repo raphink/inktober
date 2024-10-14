@@ -181,6 +181,13 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Animate the leviathan image by alternating between two images
+            const leviathanImage = document.querySelector('.levithian img');
+            let isAlternate = false;
+            setInterval(() => {
+                isAlternate = !isAlternate;
+                leviathanImage.src = isAlternate ? 'levithian2_small.png' : 'levithian_small.png';
+            }, 1000);
             // Helper function to add or remove classes
             function toggleClass(element, className, condition) {
                 if (condition) {
