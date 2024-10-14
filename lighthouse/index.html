@@ -121,94 +121,96 @@
     <div class="flickering-circle"></div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            
             let autoRotate = true;
-        let currentAngle = 0;
+            let currentAngle = 0;
 
-        function rotateLight() {
-            if (!autoRotate) return;
-            currentAngle += 0.5;
-            if (currentAngle >= 360) currentAngle = 0;
-            updateLightPosition(currentAngle);
-            requestAnimationFrame(rotateLight);
-        }
-
-        function updateLightPosition(angle) {
-            const lighthouse = document.querySelector('.lighthouse');
-            const foregroundBackground = document.querySelector('.foreground-background');
-            const revealCone = document.querySelector('.reveal-cone');
-            const intermediateBackground = document.querySelector('.intermediate-background');
-            const verse1 = document.getElementById('verse1');
-            const verse2 = document.getElementById('verse2');
-
-            const rect = lighthouse.getBoundingClientRect();
-            const lighthouseX = rect.left + rect.width / 2;
-            const lighthouseY = rect.top + rect.height / 2;
-
-            const radians = (angle * Math.PI) / 180;
-
-            // Reveal parts of the foreground background based on light position with a fixed shape rotating
-            const narrowWidth = 30; // Narrow width at the lighthouse
-            const wideWidth = 800; // Wide width at the distant side to ensure it reaches the sides of the screen
-            const beamLength = 2000; // Extended length to ensure coverage
-            const clipPathX1 = lighthouseX;
-            const clipPathY1 = lighthouseY;
-            const clipPathX2 = lighthouseX + narrowWidth * Math.cos(radians - Math.PI / 2);
-            const clipPathY2 = lighthouseY + narrowWidth * Math.sin(radians - Math.PI / 2);
-            const clipPathX3 = lighthouseX + beamLength * Math.cos(radians) + wideWidth * Math.cos(radians - Math.PI / 2);
-            const clipPathY3 = lighthouseY + beamLength * Math.sin(radians) + wideWidth * Math.sin(radians - Math.PI / 2);
-            const clipPathX4 = lighthouseX + beamLength * Math.cos(radians) + wideWidth * Math.cos(radians + Math.PI / 2);
-            const clipPathY4 = lighthouseY + beamLength * Math.sin(radians) + wideWidth * Math.sin(radians + Math.PI / 2);
-            foregroundBackground.style.clipPath = `polygon(${clipPathX1}px ${clipPathY1}px, ${clipPathX2}px ${clipPathY2}px, ${clipPathX3}px ${clipPathY3}px, ${clipPathX4}px ${clipPathY4}px)`;
-            intermediateBackground.style.clipPath = `circle(150px at 50% 50%)`;
-            revealCone.style.clipPath = `polygon(${clipPathX1}px ${clipPathY1}px, ${clipPathX2}px ${clipPathY2}px, ${clipPathX3}px ${clipPathY3}px, ${clipPathX4}px ${clipPathY4}px)`;
-
-            // Highlight verses when light passes over them
-            const distanceToVerse1 = Math.hypot(lighthouseX + beamLength * Math.cos(radians) - verse1.offsetLeft, lighthouseY + beamLength * Math.sin(radians) - verse1.offsetTop);
-            const distanceToVerse2 = Math.hypot(lighthouseX + beamLength * Math.cos(radians) - verse2.offsetLeft, lighthouseY + beamLength * Math.sin(radians) - verse2.offsetTop);
-
-            if (distanceToVerse1 < 200) {
-                verse1.style.opacity = 1;
-            } else {
-                verse1.style.opacity = 0;
+            function rotateLight() {
+                if (!autoRotate) return;
+                currentAngle += 0.5;
+                if (currentAngle >= 360) currentAngle = 0;
+                updateLightPosition(currentAngle);
+                requestAnimationFrame(rotateLight);
             }
 
-            if (distanceToVerse2 < 200) {
-                verse2.style.opacity = 1;
-            } else {
-                verse2.style.opacity = 0;
-            }
-        }
+            function updateLightPosition(angle) {
+                const lighthouse = document.querySelector('.lighthouse');
+                const foregroundBackground = document.querySelector('.foreground-background');
+                const revealCone = document.querySelector('.reveal-cone');
+                const intermediateBackground = document.querySelector('.intermediate-background');
+                const verse1 = document.getElementById('verse1');
+                const verse2 = document.getElementById('verse2');
 
-        document.addEventListener('mousemove', function (event) {
+                const rect = lighthouse.getBoundingClientRect();
+                const lighthouseX = rect.left + rect.width / 2;
+                const lighthouseY = rect.top + rect.height / 2;
+
+                const radians = (angle * Math.PI) / 180;
+
+                // Reveal parts of the foreground background based on light position with a fixed shape rotating
+                const narrowWidth = 30; // Narrow width at the lighthouse
+                const wideWidth = 800; // Wide width at the distant side to ensure it reaches the sides of the screen
+                const beamLength = 2000; // Extended length to ensure coverage
+                const clipPathX1 = lighthouseX;
+                const clipPathY1 = lighthouseY;
+                const clipPathX2 = lighthouseX + narrowWidth * Math.cos(radians - Math.PI / 2);
+                const clipPathY2 = lighthouseY + narrowWidth * Math.sin(radians - Math.PI / 2);
+                const clipPathX3 = lighthouseX + beamLength * Math.cos(radians) + wideWidth * Math.cos(radians - Math.PI / 2);
+                const clipPathY3 = lighthouseY + beamLength * Math.sin(radians) + wideWidth * Math.sin(radians - Math.PI / 2);
+                const clipPathX4 = lighthouseX + beamLength * Math.cos(radians) + wideWidth * Math.cos(radians + Math.PI / 2);
+                const clipPathY4 = lighthouseY + beamLength * Math.sin(radians) + wideWidth * Math.sin(radians + Math.PI / 2);
+                foregroundBackground.style.clipPath = `polygon(${clipPathX1}px ${clipPathY1}px, ${clipPathX2}px ${clipPathY2}px, ${clipPathX3}px ${clipPathY3}px, ${clipPathX4}px ${clipPathY4}px)`;
+                intermediateBackground.style.clipPath = `circle(150px at 50% 50%)`;
+                revealCone.style.clipPath = `polygon(${clipPathX1}px ${clipPathY1}px, ${clipPathX2}px ${clipPathY2}px, ${clipPathX3}px ${clipPathY3}px, ${clipPathX4}px ${clipPathY4}px)`;
+
+                // Highlight verses when light passes over them
+                const distanceToVerse1 = Math.hypot(lighthouseX + beamLength * Math.cos(radians) - verse1.offsetLeft, lighthouseY + beamLength * Math.sin(radians) - verse1.offsetTop);
+                const distanceToVerse2 = Math.hypot(lighthouseX + beamLength * Math.cos(radians) - verse2.offsetLeft, lighthouseY + beamLength * Math.sin(radians) - verse2.offsetTop);
+
+                if (distanceToVerse1 < 200) {
+                    verse1.style.opacity = 1;
+                } else {
+                    verse1.style.opacity = 0;
+                }
+
+                if (distanceToVerse2 < 200) {
+                    verse2.style.opacity = 1;
+                } else {
+                    verse2.style.opacity = 0;
+                }
+            }
+
+            document.addEventListener('mousemove', function (event) {
                 autoRotate = false;
-            const lighthouse = document.querySelector('.lighthouse');
-            const foregroundBackground = document.querySelector('.foreground-background');
-            const revealCone = document.querySelector('.reveal-cone');
-            const intermediateBackground = document.querySelector('.intermediate-background');
-            const verse1 = document.getElementById('verse1');
-            const verse2 = document.getElementById('verse2');
+                const lighthouse = document.querySelector('.lighthouse');
+                const foregroundBackground = document.querySelector('.foreground-background');
+                const revealCone = document.querySelector('.reveal-cone');
+                const intermediateBackground = document.querySelector('.intermediate-background');
+                const verse1 = document.getElementById('verse1');
+                const verse2 = document.getElementById('verse2');
 
-            const rect = lighthouse.getBoundingClientRect();
-            const lighthouseX = rect.left + rect.width / 2;
-            const lighthouseY = rect.top + rect.height / 2;
+                const rect = lighthouse.getBoundingClientRect();
+                const lighthouseX = rect.left + rect.width / 2;
+                const lighthouseY = rect.top + rect.height / 2;
 
-            const angle = Math.atan2(event.clientY - lighthouseY, event.clientX - lighthouseX) * 180 / Math.PI;
-            updateLightPosition(angle);
+                const angle = Math.atan2(event.clientY - lighthouseY, event.clientX - lighthouseX) * 180 / Math.PI;
+                updateLightPosition(angle);
+            });
+
+            let inactivityTimer;
+            function resetInactivityTimer() {
+                clearTimeout(inactivityTimer);
+                inactivityTimer = setTimeout(() => {
+                    autoRotate = true;
+                    rotateLight();
+                }, 3000);
+            }
+            
+            document.addEventListener('mousemove', resetInactivityTimer);
+            resetInactivityTimer();
+
+            rotateLight();
         });
-
-        let inactivityTimer;
-        function resetInactivityTimer() {
-            clearTimeout(inactivityTimer);
-            inactivityTimer = setTimeout(() => {
-                autoRotate = true;
-                rotateLight();
-            }, 3000);
-        }
-        
-        document.addEventListener('mousemove', resetInactivityTimer);
-        resetInactivityTimer();
-
-        rotateLight();
     </script>
 </body>
 </html>
