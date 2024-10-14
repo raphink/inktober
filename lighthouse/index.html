@@ -243,7 +243,7 @@
 
                 // Calculate lighthouse position
                 const rect = lighthouse.getBoundingClientRect();
-                const lighthouseX = rect.left + rect.width / 2;
+                const lighthouseX = rect.left + rect.width / 2 - 10;
                 const lighthouseY = rect.top; // Top center of the lighthouse
 
                 // Beam parameters
@@ -254,16 +254,14 @@
                 // Calculate clip path points for the beam
                 const clipPathX1 = lighthouseX;
                 const clipPathY1 = lighthouseY;
-                const clipPathX2 = lighthouseX + narrowWidth * Math.cos(radians - Math.PI / 2);
-                const clipPathY2 = lighthouseY + narrowWidth * Math.sin(radians - Math.PI / 2);
                 const clipPathX3 = lighthouseX + beamLength * Math.cos(radians) + wideWidth * Math.cos(radians - Math.PI / 2);
                 const clipPathY3 = lighthouseY + beamLength * Math.sin(radians) + wideWidth * Math.sin(radians - Math.PI / 2);
                 const clipPathX4 = lighthouseX + beamLength * Math.cos(radians) + wideWidth * Math.cos(radians + Math.PI / 2);
                 const clipPathY4 = lighthouseY + beamLength * Math.sin(radians) + wideWidth * Math.sin(radians + Math.PI / 2);
                 
                 // Update clip paths to visualize the beam
-                foregroundBackground.style.clipPath = `polygon(${clipPathX1}px ${clipPathY1}px, ${clipPathX2}px ${clipPathY2}px, ${clipPathX3}px ${clipPathY3}px, ${clipPathX4}px ${clipPathY4}px)`;
-                revealCone.style.clipPath = `polygon(${clipPathX1}px ${clipPathY1}px, ${clipPathX2}px ${clipPathY2}px, ${clipPathX3}px ${clipPathY3}px, ${clipPathX4}px ${clipPathY4}px)`;
+                foregroundBackground.style.clipPath = `polygon(${clipPathX1}px ${clipPathY1}px, ${clipPathX3}px ${clipPathY3}px, ${clipPathX4}px ${clipPathY4}px)`;
+                revealCone.style.clipPath = `polygon(${clipPathX1}px ${clipPathY1}px, ${clipPathX3}px ${clipPathY3}px, ${clipPathX4}px ${clipPathY4}px)`;
 
                 // Update each verse's lit state based on the beam's angle
                 verses.forEach(verse => {
